@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Diretório do Ambiente Node
+node_modules/
+
+# Ambiente de produção
+.env
+.env.*.local
+
+# Diretórios temporários
+tmp/
+temp/
+cache/
+
+# Compilados
+dist/
+build/
+
+# Configurações do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+
+# Testes e Cobertura
+coverage/
+.nyc_output/
+
+# Arquivos de pacotes bloqueados
+package-lock.json
+yarn.lock
