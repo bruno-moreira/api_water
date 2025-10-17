@@ -14,9 +14,11 @@ CREATE TABLE water (
     protect_pump1 BOOLEAN,
     protect_pump2 BOOLEAN,
     a1_contact_pump1 BOOLEAN,
-    a1_contact_pump2 BOOLEAN,
-    state INTEGER
+    a1_contact_pump2 BOOLEAN, 
+    state INTEGER,
+    pump_aux BOOLEAN,
+    wvol INTEGER
 );
 
 
-<!-- http://localhost:3000/api/nivel/insert?wlevel=50&state=32
+<!-- http://localhost:3000/api/nivel/insert?wlevel=50&state=32&pump_aux=1&wvol=100 http://192.168.5.30:3000/api/nivel/insert?wlevel=50&state=32&pump_aux=1&wvol=100

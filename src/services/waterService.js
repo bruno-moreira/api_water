@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 import waterModel from '../model/waterModel.js';
 
 const waterService = {
-    verificaWater: async ({ wlevel, state }) => {
+    verificaWater: async ({ wlevel, state, pump_aux, wvol }) => {
 
         const hour = moment().tz("America/Sao_Paulo").format('YYYY-MM-DD HH:mm:ss');
 
@@ -23,6 +23,9 @@ const waterService = {
 
         console.log({ hour, pump1, pump2, protect_pump1, a1_contact_pump2 });
 
+        // Campos opcionais com valores padrão
+        const computedPumpAux = typeof pump_aux === 'boolean' ? pump_aux : false;
+        const computedWvol = typeof wvol === 'number' ? wvol : null;
 
         const water = await waterModel.createWater({
             hour,
@@ -33,6 +36,8 @@ const waterService = {
             protect_pump2,
             a1_contact_pump1,
             a1_contact_pump2,
+            pump_aux: computedPumpAux,
+            wvol: computedWvol,
             state
         });
 
