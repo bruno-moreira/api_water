@@ -1,14 +1,18 @@
 version: "3.8"
 
 services:
-  
   postgres-compose:
-    image: postgres
+    image: postgres:latest
+    container_name: postgres_water_monitor
     environment:
       POSTGRES_DB: water_level
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "1234"
     ports:
       - "5432:5432"
     volumes:
-      - ./database:/var/lib/postgresql/data
-  
+      # Persistência dos dados
+      - ./database:/var/lib/postgresql
+      # Script de inicialização (Cria a tabela automaticamente)
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always

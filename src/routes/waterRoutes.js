@@ -1,5 +1,8 @@
 import express from 'express';
 import waterController from '../controllers/waterController.js';
+import asyncHandler from "../middlewares/asyncHandler.js";
+import { insertLimiter } from "../middlewares/rateLimit.js";
+import { validateCreateWater } from "../middlewares/validateWaterInput.js";
 
 const router = express.Router();
 
@@ -19,13 +22,13 @@ const router = express.Router();
  *               items:
  *                 $ref: '#/components/schemas/Water'
  */
-router.get('/', waterController.getAllWater);
+router.get('/', asyncHandler(waterController.getAllWater));
 
 /**
  * @openapi
- * /api/nivel/last4h:
+ * /api/nivel/last2h:
  *   get:
- *     summary: Retorna buckets de 30 minutos das últimas 4 horas (hour, wlevel)
+ *     summary: Retorna buckets de 30 minutos das últimas 2 horas (hour, wlevel)
  *     tags: [Water]
  *     responses:
  *       200:
@@ -43,7 +46,7 @@ router.get('/', waterController.getAllWater);
  *                   wlevel:
  *                     type: integer
  */
-router.get('/last4h', waterController.getLast4h);
+router.get('/last2h', asyncHandler(waterController.getLast2h));
 
 /**
  * @openapi
@@ -70,7 +73,7 @@ router.get('/last4h', waterController.getLast4h);
  *       400:
  *         description: Campos obrigatórios ausentes
  */
-router.get('/insert', waterController.createWaterQuery);
+router.get('/insert', insertLimiter, asyncHandler(waterController.createWaterQuery));
 
 /**
  * @openapi
@@ -94,7 +97,7 @@ router.get('/insert', waterController.createWaterQuery);
  *       404:
  *         description: Não encontrado
  */
-router.get('/:id(\\d+)', waterController.getWaterById);
+router.get('/:id(\\d+)', asyncHandler(waterController.getWaterById));
 
 /**
  * @openapi
@@ -118,6 +121,6 @@ router.get('/:id(\\d+)', waterController.getWaterById);
  *       400:
  *         description: Campos obrigatórios ausentes
  */
-router.post('/', waterController.createWater);
+router.post('/', insertLimiter, validateCreateWater, asyncHandler(waterController.createWater));
 
 export default router;

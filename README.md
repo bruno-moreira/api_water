@@ -28,9 +28,19 @@ DB_NAME=water_level
 ```bash
 docker compose -f db/docker-compose.yaml up -d
 ```
-- Sem Docker: crie o banco e a tabela executando `db/bd.sql` no seu PostgreSQL (ajuste conforme necessário).
+- Sem Docker: crie apenas o banco no PostgreSQL e aplique as migrações.
 
-Estrutura básica (ver `db/bd.sql`):
+Aplicar migrações:
+```bash
+npm run migrate:latest
+```
+
+Consultar status das migrações:
+```bash
+npm run migrate:status
+```
+
+Estrutura principal criada pelas migrações (`db/migrations/knex`):
 ```sql
 CREATE TABLE water (
   id SERIAL PRIMARY KEY,
@@ -61,7 +71,7 @@ A API iniciará em `http://localhost:${PORT}` (padrão `3000`).
 Base: `/api/nivel`
 
 - `GET /api/nivel/` — lista os últimos registros (limite 100)
-- `GET /api/nivel/last4h` — retorna buckets de 30 minutos das últimas 2 horas para gráficos
+- `GET /api/nivel/last2h` — retorna buckets de 30 minutos das últimas 2 horas para gráficos
   - retorna: `[{ hour: string, wlevel: number }]`
 - `GET /api/nivel/:id` — obtém um registro pelo `id` (apenas dígitos)
 - `POST /api/nivel/` — cria novo registro via JSON
@@ -79,7 +89,7 @@ curl -X POST http://localhost:3000/api/nivel/ \
 curl "http://localhost:3000/api/nivel/insert?wlevel=50&state=32&pump_aux=true&wvol=100"
 
 # Obter dados para gráfico (últimas 2h, buckets de 30min)
-curl http://localhost:3000/api/nivel/last4h
+curl http://localhost:3000/api/nivel/last2h
 
 # Listar
 curl http://localhost:3000/api/nivel/
@@ -94,12 +104,15 @@ curl http://localhost:3000/api/nivel/
 
 ### Observações
 - Certifique-se que `DB_*` no `.env` batem com seu PostgreSQL/Docker.
-- O front-end (`front_water`) consome `GET /api/nivel/` para indicadores e `GET /api/nivel/last4h` para o gráfico de histórico.
-- O endpoint `/api/nivel/last4h` usa `generate_series` para garantir buckets de 30 minutos mesmo sem dados em alguns períodos.
+- O front-end (`front_water`) consome `GET /api/nivel/` para indicadores e `GET /api/nivel/last2h` para o gráfico de histórico.
+- O endpoint `/api/nivel/last2h` usa `generate_series` para garantir buckets de 30 minutos mesmo sem dados em alguns períodos.
 
 ### Scripts
 - `npm run dev`: inicia em modo desenvolvimento com nodemon
 - `npm start`: inicia em modo produção (Node)
+- `npm run migrate:latest`: aplica migrações pendentes (Knex)
+- `npm run migrate:status`: lista migrações aplicadas/pendentes
+- `npm run migrate:rollback`: desfaz o último batch de migrações
 
 ### Licença
 Uso interno/educacional. Ajuste conforme necessário.
